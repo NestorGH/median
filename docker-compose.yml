@@ -11,9 +11,9 @@ services:
 
     environment:
 
-      - POSTGRES_USER=nestorcito
+      - POSTGRES_USER=nestor
 
-      - POSTGRES_PASSWORD=56709
+      - POSTGRES_PASSWORD=pass56709
 
     volumes:
 
