@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('articles')
+@ApiTags('articles')
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) {}
 
@@ -15,6 +17,11 @@ export class ArticlesController {
   @Get()
   findAll() {
     return this.articlesService.findAll();
+  }
+
+  @Get('drafts')
+  findDrafts() {
+    return this.articlesService.findDrafts()
   }
 
   @Get(':id')
