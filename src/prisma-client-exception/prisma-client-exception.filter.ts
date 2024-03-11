@@ -27,6 +27,14 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {// 2 exten
         });
         break;
       }
+      case 'P2025': {
+        const status = HttpStatus.NOT_FOUND;
+        response.status(status).json({
+          statusCode: status,
+          message: message,
+        });
+        break;
+      }
       default:
         //default 500 error for everything else
         super.catch(exception, host);
