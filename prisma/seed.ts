@@ -6,13 +6,44 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// create two dummy users
 async function main() {
+  const user1 = await prisma.user.upsert({
+    where: { email: 'sabin@adams.com' },
+
+    update: {},
+
+    create: {
+      email: 'sabin@adams.com',
+
+      name: 'Sabin Adams',
+
+      password: 'password-sabin',
+    },
+  });
+
+  const user2 = await prisma.user.upsert({
+    where: { email: 'alex@ruheni.com' },
+
+    update: {},
+
+    create: {
+      email: 'alex@ruheni.com',
+
+      name: 'Alex Ruheni',
+
+      password: 'password-alex',
+    },
+  });
+
   // create two dummy articles
 
   const post1 = await prisma.article.upsert({
     where: { title: 'Prisma Adds Support for MongoDB' },
 
-    update: {},
+    update: {
+      authorId: user1.id,
+    },
 
     create: {
       title: 'Prisma Adds Support for MongoDB',
@@ -23,13 +54,14 @@ async function main() {
         "We are excited to share that today's Prisma ORM release adds stable support for MongoDB!",
 
       published: false,
+      authorId: user1.id,
     },
   });
 
   const post2 = await prisma.article.upsert({
     where: { title: "What's new in Prisma? (Q1/22)" },
 
-    update: {},
+    update: { authorId: user2.id },
 
     create: {
       title: "What's new in Prisma? (Q1/22)",
@@ -40,10 +72,23 @@ async function main() {
         'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
 
       published: true,
+      authorId: user2.id,
     },
   });
 
-  console.log({ post1, post2 });
+  const post3 = await prisma.article.upsert({
+    where: { title: 'Prisma Client Just Became a Lot More Flexible' },
+    update: {},
+    create: {
+      title: 'Prisma Client Just Became a Lot More Flexible',
+      body: 'Prisma Client extensions provide a powerful new way to add functionality to Prisma in a type-safe manner...',
+      description:
+        'This article will explore various ways you can use Prisma Client extensions to add custom functionality to Prisma Client..',
+      published: true,
+    },
+  });
+
+  console.log({ user1, user2, post1, post2, post3 });
 }
 
 // execute the main function
