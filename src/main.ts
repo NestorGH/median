@@ -8,12 +8,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const config = new DocumentBuilder()
     .setTitle('Median API')
     .setDescription('Median API description')
     .setVersion('0.1')
+    .addBearerAuth()
     .build();
 
   // Swagger
