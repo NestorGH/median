@@ -1,8 +1,13 @@
 import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
-import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
+import {
+  ClassSerializerInterceptor,
+  HttpStatus,
+  ValidationPipe,
+} from '@nestjs/common';
+import { PrismaClientExceptionFilter } from 'nestjs-prisma';
+//import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,7 +28,15 @@ async function bootstrap() {
 
   // Exception filter
   const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+  app.useGlobalFilters(
+    new PrismaClientExceptionFilter(httpAdapter, {
+      // Prisma error code
+      P2000: HttpStatus.BAD_REQUEST,
+      P2002: HttpStatus.CONFLICT,
+      P2025: HttpStatus.NOT_FOUND,
+
+    }),
+  );
 
   await app.listen(3000);
 }
