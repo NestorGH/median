@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -7,16 +11,27 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ArticlesService {
   constructor(private prisma: PrismaService) {}
 
-  create(createArticleDto: CreateArticleDto) {
-    return this.prisma.article.create({ data: createArticleDto });
+  async create(createArticleDto: CreateArticleDto) {
+    try {
+      const article = this.prisma.article.create({ data: createArticleDto });
+      return article;
+    } catch (error) {
+      throw new InternalServerErrorException('Something bad happened');
+    }
   }
 
-  findAll() {
-    return this.prisma.article.findMany({ where: { published: true } });
+  async findAll() {
+    const article = await this.prisma.article.findMany({
+      where: { published: true },
+    });
+    return article;
   }
 
-  findDrafts() {
-    return this.prisma.article.findMany({ where: { published: false } });
+  async findDrafts() {
+    const article = await this.prisma.article.findMany({
+      where: { published: false },
+    });
+    return article;
   }
 
   async findOne(id: number) {
@@ -34,14 +49,17 @@ export class ArticlesService {
     return article;
   }
 
-  update(id: number, updateArticleDto: UpdateArticleDto) {
-    return this.prisma.article.update({
+  async update(id: number, updateArticleDto: UpdateArticleDto) {
+    const article = await this.prisma.article.update({
       where: { id },
       data: updateArticleDto,
     });
+
+    return article;
   }
 
-  remove(id: number) {
-    return this.prisma.article.delete({ where: { id } });
+  async remove(id: number) {
+    const article = await this.prisma.article.delete({ where: { id } });
+    return article;
   }
 }
